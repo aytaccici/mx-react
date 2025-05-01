@@ -211,4 +211,8 @@ export const providerPatterns = {
     mx: ['aerotek.com.tr', "aerotek"],
     spf: ['aerotek.com.tr'],
   },
+  doruknet: {
+    mx: ['doruk.net.tr', "doruk.net"],
+    spf: ['v=spf1 include:spf.doruk.net.tr ~all'],
+  },
 }; 
