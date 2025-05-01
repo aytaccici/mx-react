@@ -3,17 +3,33 @@ import { detectMailProvider } from '../utils/mailProviderDetector';
 
 export async function POST(request: Request) {
   try {
-    const { domain } = await request.json();
+    const { domains } = await request.json();
     
-    if (!domain) {
+    if (!domains || !Array.isArray(domains)) {
       return NextResponse.json(
-        { error: 'Domain gerekli' },
+        { error: 'Geçerli bir domain listesi gönderilmedi' },
         { status: 400 }
       );
     }
 
-    const result = await detectMailProvider(domain);
-    return NextResponse.json(result);
+    // Tüm domainler için paralel olarak işlem yap
+    const results = await Promise.all(
+      domains.map(async (domain) => {
+        try {
+          return await detectMailProvider(domain);
+        } catch (error) {
+          return {
+            name: 'Hata',
+            confidence: 0,
+            mxRecords: [],
+            spfRecords: [],
+            error: error instanceof Error ? error.message : 'Bilinmeyen hata'
+          };
+        }
+      })
+    );
+
+    return NextResponse.json(results);
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Bilinmeyen hata' },
