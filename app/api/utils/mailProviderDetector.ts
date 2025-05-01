@@ -1,12 +1,13 @@
 import dns from 'dns';
 import { promisify } from 'util';
-import { getIpInfo, getMxData, getProviderType } from './ipInfo';
+import { getIpInfo} from './ipInfo';
+import { providerPatterns } from './mailProviderPatterns';
 
 const resolveMx = promisify(dns.resolveMx);
 const resolveTxt = promisify(dns.resolveTxt);
 const resolve4 = promisify(dns.resolve4);
 
-interface MailProvider {
+export interface MailProvider {
   name: string;
   confidence: number;
   mxRecords: Array<{
@@ -19,83 +20,8 @@ interface MailProvider {
     isp: string;
     country?: string;
   }[];
+  domain?: string;
 }
-
-const providerPatterns = {
-  google: {
-    mx: ['aspmx.l.google.com', 'alt1.aspmx.l.google.com', 'alt2.aspmx.l.google.com'],
-    spf: ['_spf.google.com', 'include:_spf.google.com'],
-  },
-  microsoft: {
-    mx: ['protection.outlook.com', 'mail.protection.outlook.com'],
-    spf: ['spf.protection.outlook.com', 'include:spf.protection.outlook.com'],
-  },
-  yandex: {
-    mx: ['mx.yandex.net'],
-    spf: ['include:_spf.yandex.net'],
-  },
-  zoho: {
-    mx: ['mx.zoho.com'],
-    spf: ['include:zoho.com'],
-  },
-  protonmail: {
-    mx: ['mail.protonmail.ch'],
-    spf: ['include:_spf.protonmail.ch'],
-  },
-  amazon: {
-    mx: ['inbound-smtp.us-east-1.amazonaws.com'],
-    spf: ['include:amazonses.com'],
-  },
-  mailgun: {
-    mx: ['mxa.mailgun.org', 'mxb.mailgun.org'],
-    spf: ['include:mailgun.org'],
-  },
-  sendgrid: {
-    mx: ['mx.sendgrid.net'],
-    spf: ['include:sendgrid.net'],
-  },
-  godaddy: {
-    mx: ['smtp.secureserver.net'],
-    spf: ['include:secureserver.net'],
-  },
-  yahoo: {
-    mx: ['mta5.am0.yahoodns.net', 'mta6.am0.yahoodns.net'],
-    spf: ['include:_spf.yahoo.com'],
-  },
-};
-
-// AS numaralarına göre ISP bilgileri
-const asnToIsp: { [key: string]: string } = {
-  '15169': 'Google',
-  '8075': 'Microsoft',
-  '13238': 'Yandex',
-  '132203': 'Zoho',
-  '200589': 'ProtonMail',
-  '16509': 'Amazon',
-  '395747': 'Mailgun',
-  '13335': 'Cloudflare',
-  '14618': 'Amazon',
-  '209242': 'SendGrid',
-  '26496': 'GoDaddy',
-  '36561': 'Yahoo',
-  '3356': 'Level 3',
-  '701': 'Verizon',
-  '7922': 'Comcast',
-  '7018': 'AT&T',
-  '1239': 'Sprint',
-  '174': 'Cogent',
-  '2914': 'NTT',
-  '3257': 'Tinet',
-  '1299': 'Telia',
-  '6830': 'Liberty Global',
-  '3320': 'Deutsche Telekom',
-  '2856': 'BT',
-  '3215': 'Orange',
-  '1273': 'Vodafone',
-  '9121': 'Türk Telekom',
-  '34984': 'Superonline',
-  '47331': 'TTNET',
-};
 
 async function getIspInfo(mxRecord: string): Promise<{ mx: string; isp: string; country?: string }> {
   try {

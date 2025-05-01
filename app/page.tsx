@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Container, Form, Button, Table, Alert, Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { exportToExcel } from './api/utils/excelExporter';
 
 interface Result {
   domain: string;
@@ -116,7 +117,27 @@ export default function Home() {
 
       {results.length > 0 && (
         <div className="mt-4">
-          <h2>Sonuçlar</h2>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h2 className="mb-0">Sonuçlar</h2>
+            <Button 
+              variant="success" 
+              onClick={() => {
+                const validResults = results
+                  .filter(result => !result.error)
+                  .map(result => ({
+                    domain: result.domain,
+                    name: result.provider,
+                    confidence: result.confidence,
+                    mxRecords: result.mxRecords,
+                    spfRecords: result.spfRecords,
+                    ispInfo: result.ispInfo
+                  }));
+                exportToExcel(validResults);
+              }}
+            >
+              Excel'e Aktar
+            </Button>
+          </div>
           <Table striped bordered hover responsive>
             <thead>
               <tr>
