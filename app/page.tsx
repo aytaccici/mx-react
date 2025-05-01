@@ -160,9 +160,9 @@ export default function Home() {
                   </td>
                   <td>
                     {!result.error && (
-                      <div className="progress" style={{ width: '100%', height: '20px' }}>
+                      <div className="progress">
                         <div
-                          className="progress-bar bg-primary"
+                          className="progress-bar"
                           role="progressbar"
                           style={{ width: `${result.confidence * 100}%` }}
                           aria-valuenow={result.confidence * 100}
