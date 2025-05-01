@@ -38,47 +38,35 @@ export default function Home() {
       .map(domain => domain.trim())
       .filter(domain => domain.length > 0);
 
-    const newResults: Result[] = [];
+    try {
+      const response = await fetch('/api/detect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ domains: domainList }),
+      });
 
-    for (const domain of domainList) {
-      try {
-        const response = await fetch('/api/detect', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ domain }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'API hatası');
-        }
-
-        const provider = await response.json();
-        newResults.push({
-          domain,
-          provider: provider.name,
-          confidence: provider.confidence,
-          mxRecords: provider.mxRecords,
-          spfRecords: provider.spfRecords,
-          ispInfo: provider.ispInfo,
-        });
-      } catch (err) {
-        newResults.push({
-          domain,
-          provider: 'Hata',
-          confidence: 0,
-          mxRecords: [],
-          spfRecords: [],
-          ispInfo: [],
-          error: err instanceof Error ? err.message : 'Bilinmeyen hata',
-        });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'API hatası');
       }
-    }
 
-    setResults(newResults);
-    setLoading(false);
+      const results = await response.json();
+      setResults(results.map((result: any, index: number) => ({
+        domain: domainList[index],
+        provider: result.name,
+        confidence: result.confidence,
+        mxRecords: result.mxRecords,
+        spfRecords: result.spfRecords,
+        ispInfo: result.ispInfo,
+        error: result.error
+      })));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Bilinmeyen hata');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
