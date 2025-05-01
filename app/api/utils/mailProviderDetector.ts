@@ -86,13 +86,13 @@ export async function detectMailProvider(domain: string): Promise<MailProvider> 
       
       // MX kayıtlarını kontrol et
       const mxMatch = sortedMxRecords.some(record => 
-        patterns.mx.some(pattern => record.exchange.includes(pattern))
+        patterns.mx.some(pattern => record.exchange.toLowerCase().includes(pattern.toLowerCase()))
       );
       if (mxMatch) confidence += 0.6;
 
       // SPF kayıtlarını kontrol et
       const spfMatch = spfRecords.some(record =>
-        patterns.spf.some(pattern => record.includes(pattern))
+        patterns.spf.some(pattern => record.toLowerCase().includes(pattern.toLowerCase()))
       );
       if (spfMatch) confidence += 0.4;
 
