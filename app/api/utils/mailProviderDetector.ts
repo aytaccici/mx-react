@@ -88,7 +88,10 @@ export async function detectMailProvider(domain: string): Promise<MailProvider> 
       const mxMatch = sortedMxRecords.some(record => 
         patterns.mx.some(pattern => record.exchange.toLowerCase().includes(pattern.toLowerCase()))
       );
-      if (mxMatch) confidence += 0.6;
+      if (mxMatch) {
+        
+        confidence += 0.6;
+      }
 
       // SPF kayıtlarını kontrol et
       const spfMatch = spfRecords.some(record =>
