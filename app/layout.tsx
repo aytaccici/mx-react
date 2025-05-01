@@ -5,7 +5,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Mail Provider Tespit Aracı',
+  title: 'Mail Provider Tespit Aracı by Aytac Cici',
   description: 'Domainlerin kullandığı mail providerları tespit eden araç',
 };
 
