@@ -191,4 +191,8 @@ export const providerPatterns = {
     mx: ['mail.kurumsaleposta.com'],
     spf: ['include:kurumsaleposta.com'],
   },
+  mailim: {
+    mx: ['cmx.yaanimail.com'],
+    spf: ['include:yaanimail.com'],
+  },
 }; 
