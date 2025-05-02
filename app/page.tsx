@@ -5,6 +5,7 @@ import { Container, Form, Button, Table, Alert, Spinner } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { exportToExcel } from './api/utils/excelExporter';
 import { useDomainStore } from './store/domainStore';
+import * as XLSX from 'xlsx';
 
 interface Result {
   domain: string;
@@ -27,6 +28,7 @@ export default function Home() {
   const [domains, setDomains] = useState<string>('');
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { domains: savedDomains, clearDomains } = useDomainStore();
 
@@ -77,6 +79,52 @@ export default function Home() {
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImportLoading(true);
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+        
+        // DOMAIN kolonundaki değerleri al ve benzersiz yap
+        const uniqueDomains = [...new Set(
+          jsonData
+            .map((row: any) => {
+              // DOMAIN kolonunu büyük/küçük harf duyarsız olarak kontrol et
+              const domainKey = Object.keys(row).find(key => key.toUpperCase() === 'DOMAIN');
+              return domainKey ? row[domainKey]?.toString().trim() : null;
+            })
+            .filter((domain): domain is string => !!domain)
+        )];
+        
+        if (uniqueDomains.length > 0) {
+          setDomains(uniqueDomains.join('\n'));
+        } else {
+          setError('Excel dosyasında DOMAIN kolonu bulunamadı veya boş');
+        }
+      } catch (err) {
+        console.error('Excel okuma hatası:', err);
+        setError('Excel dosyası okunurken bir hata oluştu');
+      } finally {
+        setImportLoading(false);
+      }
+    };
+
+    reader.onerror = () => {
+      setError('Dosya okuma hatası');
+      setImportLoading(false);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
   return (
     <div className="min-vh-100 d-flex flex-column">
       <Container fluid className="flex-grow-1 py-5 px-4">
@@ -84,19 +132,47 @@ export default function Home() {
         
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2 className="h5 mb-0">Domain Listesi</h2>
-          {savedDomains.length > 0 && (
-            <Button 
-              variant="outline-danger" 
-              size="sm"
-              onClick={() => {
-                clearDomains();
-                setDomains('');
-              }}
-            >
-              <i className="bi bi-trash me-1"></i>
-              Listeyi Temizle
-            </Button>
-          )}
+          <div className="d-flex gap-2">
+            <div className="position-relative">
+              <input
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleFileUpload}
+                className="d-none"
+                id="excelUpload"
+              />
+              <label
+                htmlFor="excelUpload"
+                className="btn btn-outline-primary btn-sm"
+                style={{ cursor: 'pointer' }}
+              >
+                {importLoading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Yükleniyor...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-file-earmark-excel me-1"></i>
+                    Excel'den İçe Aktar
+                  </>
+                )}
+              </label>
+            </div>
+            {savedDomains.length > 0 && (
+              <Button 
+                variant="outline-danger" 
+                size="sm"
+                onClick={() => {
+                  clearDomains();
+                  setDomains('');
+                }}
+              >
+                <i className="bi bi-trash me-1"></i>
+                Listeyi Temizle
+              </Button>
+            )}
+          </div>
         </div>
 
         <Form onSubmit={handleSubmit}>
