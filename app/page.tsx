@@ -133,6 +133,14 @@ export default function Home() {
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2 className="h5 mb-0">Domain Listesi</h2>
           <div className="d-flex gap-2">
+            <a
+              href="/TEMPLATE.xlsx"
+              download
+              className="btn btn-outline-secondary btn-sm"
+            >
+              <i className="bi bi-download me-1"></i>
+              Template İndir
+            </a>
             <div className="position-relative">
               <input
                 type="file"
