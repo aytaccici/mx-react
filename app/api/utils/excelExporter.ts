@@ -7,10 +7,10 @@ export function exportToExcel(results: MailProvider[]) {
 
   // Başlıkları ekle
   worksheet.columns = [
-    { header: 'Domain', key: 'domain', width: 30 },
-    { header: 'MX Kaydı ve ISP', key: 'mx', width: 50 },
-    { header: 'Mail Provider', key: 'provider', width: 30 },
-    { header: 'Güven Skoru', key: 'confidence', width: 15 }
+    { header: 'DOMAIN', key: 'domain', width: 30 },
+    { header: 'MX_ISP', key: 'mx', width: 50 },
+    { header: 'PROVIDER', key: 'provider', width: 30 },
+    { header: 'CONFIDENCE_SCORE', key: 'confidence', width: 15 }
   ];
 
   // Stil tanımlamaları
