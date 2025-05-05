@@ -9,8 +9,8 @@ import Script from 'next/script';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Firma Listesi',
-  description: 'İstanbul\'daki firmaların listesi.',
+  title: 'Mailim Mx Check',
+  description: 'By Team Composer',
 };
 
 export default function RootLayout({
