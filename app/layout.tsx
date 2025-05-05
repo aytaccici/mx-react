@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Mailim Mx Check',
-  description: 'By Team Composer',
+  description: 'Developed By Team Composer',
 };
 
 export default function RootLayout({
