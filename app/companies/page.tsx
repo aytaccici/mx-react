@@ -119,6 +119,10 @@ export default function CompaniesPage() {
                         </span>
                       )}
                     </div>
+                    {/* Sektör bilgisi */}
+                    {company.SEKTOR && (
+                      <span className="badge bg-primary mb-3 d-block w-100 text-wrap p-2" style={{ whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.3 }}>{company.SEKTOR}</span>
+                    )}
                     <p className="card-subtitle text-muted mb-3">
                       <i className="bi bi-geo-alt-fill me-1"></i>
                       {company.ILCE_TANIMI}, {company.IL_TANIMI}
