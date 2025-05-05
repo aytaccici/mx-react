@@ -23,9 +23,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
           <div className="container">
-            <Link className="navbar-brand" href="/">
-              <i className="bi bi-building me-2"></i>
-              MX Checker
+            <Link className="navbar-brand d-flex align-items-center" href="/">
+              <img src="/mailim.png" alt="Mailim Logo" style={{ height: 36, marginRight: 1 }} />
             </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
               <span className="navbar-toggler-icon"></span>
